@@ -28,7 +28,7 @@ final class BugRepository extends AggregateRepository implements BugRepositoryIn
             new AggregateTranslator(),
             null, //We don't use a snapshot store in the example
             null, //Also a custom stream name is not required
-            false //But we enable the "one-stream-per-aggregate" mode
+            true //But we enable the "one-stream-per-aggregate" mode
         );
     }
 

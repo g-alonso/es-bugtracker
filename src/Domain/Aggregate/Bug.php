@@ -2,11 +2,11 @@
 
 namespace Bug\Domain\Aggregate;
 
+use Bug\Domain\DomainEvent\BugWasMarkedAsFixed;
 use Bug\Domain\DomainEvent\NewBugWasRegistred;
 use Prooph\EventSourcing\AggregateChanged;
 use Prooph\EventSourcing\AggregateRoot;
 use Ramsey\Uuid\Uuid;
-
 
 /**
  * Class Bug
@@ -22,6 +22,11 @@ class Bug extends AggregateRoot
      * @var string
      */
     private $name;
+
+    /**
+     * @var BugStatus
+     */
+    private $status;
 
     /**
      * @param string $name
@@ -50,24 +55,29 @@ class Bug extends AggregateRoot
     }
 
 
+    /**
+     *
+     */
     public function markAsFixed(): void
     {
-        $status = BugStatus::FIXED();
+        $status = BugStatus::DONE();
 
-        /*if (! $this->status->is(TodoStatus::OPEN())) {
-            throw Exception\TodoNotOpen::triedStatus($status, $this);
-        }*/
-
-        $this->recordThat(BugWasMarkedAsFixed::fromStatus($this->uuid, 'ad', $status, $this->assigneeId));
+        $this->recordThat(BugWasMarkedAsFixed::fromStatus($this->uuid, $this->status, $status));
     }
 
+    /**
+     * @param AggregateChanged $event
+     */
     protected function apply(AggregateChanged $event): void
     {
         switch (get_class($event)) {
             case NewBugWasRegistred::class:
-                //Simply assign the event payload to the appropriate properties
                 $this->uuid = $event->uuid();
                 $this->name = $event->name();
+                $this->status = BugStatus::OPEN();
+                break;
+            case BugWasMarkedAsFixed::class:
+                $this->status = $event->newStatus();
                 break;
         }
     }

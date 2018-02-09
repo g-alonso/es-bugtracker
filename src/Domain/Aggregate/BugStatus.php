@@ -2,7 +2,7 @@
 
 namespace Bug\Domain\Aggregate;
 
-use MabeEnum\Enum;
+use Bug\Domain\Enum;
 
 /**
  * Class BugStatus
@@ -11,7 +11,6 @@ use MabeEnum\Enum;
 final class BugStatus extends Enum
 {
     public const OPEN = 'open';
-    public const FIXED = 'fixed';
-    public const CLOSED = 'closed';
-
+    public const DONE = 'done';
+    public const EXPIRED = 'expired';
 }
